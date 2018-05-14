@@ -37,7 +37,7 @@ func main() {
       } else if action == "deregister" {
         log.Printf("Deregistering instance with ELB Name: %s", elb)
   			//make call to ELB API
-  			_, err := DeregisterInstanceWithELB(InstanceID, elb, ELBsvc)
+  			_, err := DeregisterInstanceFromELB(InstanceID, elb, ELBsvc)
   			if err != nil {
   				log.Fatalf("Encountered error deregistering instance with ELB: %s\n Error: %s", elb, err)
   			}
@@ -80,18 +80,18 @@ func RegisterInstanceWithELB(InstanceID string, ELBName string, elbClient *elb.E
 	return true, nil
 }
 
-// DeregisterInstanceWithELB Removes this instance with its ELB
-func DeregisterInstanceWithELB(InstanceID string, ELBName string, elbClient *elb.ELB) (bool, error) {
-	registerArgs := &elb.DeregisterInstancesWithLoadBalancerInput{
-		Instances: []*elb.Instance{
-			{
-				InstanceId: aws.String(InstanceID),
-			},
-		},
-		LoadBalancerName: aws.String(ELBName),
-	}
+// DeregisterInstanceFromELB Removes this instance with its ELB
+func DeregisterInstanceFromELB(InstanceID string, ELBName string, elbClient *elb.ELB) (bool, error) {
+	deregisterArgs := &elb.DeregisterInstancesFromLoadBalancerInput{
+    Instances: []*elb.Instance{
+        {
+            InstanceId: aws.String(InstanceID),
+        },
+    },
+    LoadBalancerName: aws.String(ELBName),
+}
 
-	_, err := elbClient.DeregisterInstancesWithLoadBalancer(registerArgs)
+	_, err := elbClient.DeregisterInstancesFromLoadBalancer(deregisterArgs)
 	if err != nil {
 		return false, errors.New(err.Error())
 	}
